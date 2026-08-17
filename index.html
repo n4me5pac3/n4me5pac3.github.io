@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nsMovies – Your Personal Movie List</title>
+  <meta name="description" content="Track your movies — watched, unwatched, and unfinished." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== SCREEN: LOGIN ===== -->
+  <div id="screen-login" class="screen active">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <span class="logo-icon">🎬</span>
+          <span class="logo-text">nsMovies</span>
+        </div>
+        <h1 class="auth-title" id="auth-title">Sign In</h1>
+        <p class="auth-sub" id="auth-sub">Welcome back. Sign in to your account.</p>
+
+        <!-- LOGIN FORM -->
+        <form id="login-form" onsubmit="handleLogin(event)" autocomplete="on">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email</label>
+            <input type="email" class="form-input" id="login-email" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="password-wrap">
+              <input type="password" class="form-input" id="login-password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
+              <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)" aria-label="Show password" tabindex="-1">
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="auth-error" id="login-error"></div>
+          <button type="submit" class="btn-primary btn-full" id="login-btn">Sign In</button>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="register-form" onsubmit="handleRegister(event)" autocomplete="on" style="display:none">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Account Name</label>
+            <input type="text" class="form-input" id="reg-name" placeholder="My Movie Vault" required autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email</label>
+            <input type="email" class="form-input" id="reg-email" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password <span class="hint">(min. 6 characters)</span></label>
+            <div class="password-wrap">
+              <input type="password" class="form-input" id="reg-password" placeholder="••••••••" required autocomplete="new-password" minlength="6" />
+              <button type="button" class="pw-toggle" onclick="togglePw('reg-password', this)" aria-label="Show password" tabindex="-1">
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="auth-error" id="reg-error"></div>
+          <button type="submit" class="btn-primary btn-full" id="reg-btn">Create Account</button>
+        </form>
+
+        <div class="auth-toggle">
+          <span id="auth-toggle-msg">Don't have an account?</span>
+          <button class="auth-toggle-btn" id="auth-toggle-btn" onclick="toggleAuthMode()">Create one</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: PROFILE SELECTOR ===== -->
+  <div id="screen-profiles" class="screen">
+    <div class="profiles-wrap">
+      <div class="profiles-account-name" id="profiles-account-name">My Account</div>
+      <h2 class="profiles-title">Who's watching?</h2>
+      <div class="profiles-grid" id="profiles-grid"></div>
+      <div class="profiles-actions">
+        <button class="btn-ghost" onclick="logout()">Sign Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN: MAIN APP ===== -->
+  <div id="screen-app" class="screen">
+    <header class="header" id="app-header">
+      <div class="header-inner">
+        <a href="#" class="logo" onclick="showView('movies')">
+          <span class="logo-icon">🎬</span>
+          <span class="logo-text">nsMovies</span>
+        </a>
+        <nav class="nav" id="main-nav">
+          <button class="nav-btn active" id="nav-movies" onclick="showView('movies')">Movies</button>
+          <button class="nav-btn" id="nav-series" onclick="showView('series')">Series</button>
+        </nav>
+        <div class="header-actions">
+          <button class="btn-icon" title="Search" onclick="toggleSearch()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+          <button class="profile-avatar-btn" id="active-profile-btn" title="Switch profile" onclick="switchProfile()">
+            <span class="profile-avatar-emoji" id="active-profile-emoji">🎬</span>
+            <img class="profile-avatar-img" id="active-profile-img" src="" alt="" style="display:none" />
+          </button>
+          <button class="btn-primary" id="add-movie-btn" onclick="openMovieModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Movie
+          </button>
+        </div>
+      </div>
+      <div class="search-bar" id="search-bar">
+        <div class="search-inner">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="search-input" placeholder="Search movies…" oninput="handleSearch(this.value)" autocomplete="off" />
+          <button class="search-clear" onclick="clearSearch()">✕</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main" id="main-content">
+      <div id="view-movies" class="view active">
+        <div class="filter-bar">
+          <div class="filters">
+            <button class="filter-tab active" id="filter-all" onclick="setFilter('all')">All</button>
+            <button class="filter-tab" id="filter-unwatched" onclick="setFilter('unwatched')">Unwatched</button>
+            <button class="filter-tab" id="filter-unfinished" onclick="setFilter('unfinished')">Unfinished</button>
+            <button class="filter-tab" id="filter-watched" onclick="setFilter('watched')">Watched</button>
+          </div>
+          <select class="sort-select" id="sort-select" onchange="setSort(this.value)">
+            <option value="added">Recently Added</option>
+            <option value="title">Title A–Z</option>
+            <option value="year">Year</option>
+            <option value="rating">My Rating</option>
+            <option value="watched">Recently Watched</option>
+          </select>
+        </div>
+        <div class="stats-bar" id="stats-bar">
+          <span class="stat-item" id="stat-total"><strong>0</strong> Movies</span>
+          <span class="stat-sep">·</span>
+          <span class="stat-item" id="stat-watched"><strong>0</strong> Watched</span>
+          <span class="stat-sep">·</span>
+          <span class="stat-item" id="stat-unwatched"><strong>0</strong> Unwatched</span>
+          <span class="stat-sep">·</span>
+          <span class="stat-item" id="stat-unfinished"><strong>0</strong> Unfinished</span>
+        </div>
+        <div class="movies-grid" id="movies-grid"></div>
+        <div class="empty-state" id="empty-state" style="display:none">
+          <div class="empty-icon">🎬</div>
+          <h3>No movies here yet</h3>
+          <p>Add your first movie to get started.</p>
+          <button class="btn-primary" onclick="openMovieModal()">Add Movie</button>
+        </div>
+        <div class="loading-state" id="loading-state">
+          <div class="spinner"></div>
+          <p>Loading movies…</p>
+        </div>
+      </div>
+
+      <div id="view-series" class="view">
+        <div class="series-header">
+          <h2 class="section-title">Series Collections</h2>
+          <button class="btn-primary" onclick="openSeriesModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Series
+          </button>
+        </div>
+        <div class="series-grid" id="series-grid"></div>
+        <div class="empty-state" id="series-empty-state" style="display:none">
+          <div class="empty-icon">🎞️</div>
+          <h3>No series yet</h3>
+          <p>Create a series to group related movies together.</p>
+          <button class="btn-primary" onclick="openSeriesModal()">Create Series</button>
+        </div>
+        <div class="loading-state" id="series-loading-state">
+          <div class="spinner"></div>
+          <p>Loading series…</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== MODAL: PROFILE ===== -->
+  <div class="modal-overlay" id="profile-modal" onclick="closeOnBackdrop(event,'profile-modal')">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="profile-modal-title">Add Profile</h2>
+        <button class="modal-close" onclick="closeModal('profile-modal')">✕</button>
+      </div>
+      <form id="profile-form" onsubmit="saveProfile(event)" autocomplete="off">
+        <input type="hidden" id="profile-edit-id" />
+        <div class="form-grid" style="padding:0 24px">
+
+          <!-- Photo upload -->
+          <div class="form-group form-col-full">
+            <label class="form-label">Profile Photo <span class="hint">(optional — replaces emoji)</span></label>
+            <div class="avatar-upload-wrap">
+              <div class="avatar-upload-preview" id="avatar-upload-preview">
+                <span id="avatar-preview-emoji">🎬</span>
+              </div>
+              <div class="avatar-upload-actions">
+                <label class="btn-secondary" for="profile-image-input" style="cursor:pointer;font-size:13px;padding:8px 14px">
+                  📷 Upload Photo
+                </label>
+                <input type="file" id="profile-image-input" accept="image/*" onchange="handleProfileImage(event)" style="display:none" />
+                <button type="button" class="btn-ghost" id="clear-avatar-btn" onclick="clearProfileImage()" style="display:none;font-size:13px">Remove</button>
+              </div>
+            </div>
+            <input type="hidden" id="profile-avatar-url" />
+          </div>
+
+          <div class="form-group form-col-full">
+            <label class="form-label" for="profile-name">Profile Name</label>
+            <input type="text" class="form-input" id="profile-name" required maxlength="20" placeholder="e.g. Alex" />
+          </div>
+
+          <div class="form-group form-col-full">
+            <label class="form-label">Avatar Emoji <span class="hint">(used when no photo)</span></label>
+            <div class="emoji-picker" id="emoji-picker">
+              <span class="emoji-opt selected" data-emoji="🎬" onclick="selectEmoji('🎬')">🎬</span>
+              <span class="emoji-opt" data-emoji="🎭" onclick="selectEmoji('🎭')">🎭</span>
+              <span class="emoji-opt" data-emoji="🍿" onclick="selectEmoji('🍿')">🍿</span>
+              <span class="emoji-opt" data-emoji="🌟" onclick="selectEmoji('🌟')">🌟</span>
+              <span class="emoji-opt" data-emoji="🔥" onclick="selectEmoji('🔥')">🔥</span>
+              <span class="emoji-opt" data-emoji="🎮" onclick="selectEmoji('🎮')">🎮</span>
+              <span class="emoji-opt" data-emoji="🎯" onclick="selectEmoji('🎯')">🎯</span>
+              <span class="emoji-opt" data-emoji="🌙" onclick="selectEmoji('🌙')">🌙</span>
+              <span class="emoji-opt" data-emoji="⭐" onclick="selectEmoji('⭐')">⭐</span>
+              <span class="emoji-opt" data-emoji="🦁" onclick="selectEmoji('🦁')">🦁</span>
+              <span class="emoji-opt" data-emoji="🐉" onclick="selectEmoji('🐉')">🐉</span>
+              <span class="emoji-opt" data-emoji="🚀" onclick="selectEmoji('🚀')">🚀</span>
+            </div>
+            <input type="hidden" id="profile-emoji" value="🎬" />
+          </div>
+
+          <div class="form-group form-col-full">
+            <label class="form-label">Color</label>
+            <div class="color-picker" id="color-picker">
+              <span class="color-opt selected" data-color="#4f8ef7" onclick="selectColor('#4f8ef7')" style="background:#4f8ef7"></span>
+              <span class="color-opt" data-color="#3fb950" onclick="selectColor('#3fb950')" style="background:#3fb950"></span>
+              <span class="color-opt" data-color="#d29922" onclick="selectColor('#d29922')" style="background:#d29922"></span>
+              <span class="color-opt" data-color="#f85149" onclick="selectColor('#f85149')" style="background:#f85149"></span>
+              <span class="color-opt" data-color="#a371f7" onclick="selectColor('#a371f7')" style="background:#a371f7"></span>
+              <span class="color-opt" data-color="#fd7e14" onclick="selectColor('#fd7e14')" style="background:#fd7e14"></span>
+              <span class="color-opt" data-color="#20c997" onclick="selectColor('#20c997')" style="background:#20c997"></span>
+              <span class="color-opt" data-color="#e91e8c" onclick="selectColor('#e91e8c')" style="background:#e91e8c"></span>
+            </div>
+            <input type="hidden" id="profile-color" value="#4f8ef7" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" onclick="closeModal('profile-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: MOVIE ===== -->
+  <div class="modal-overlay" id="movie-modal" onclick="closeOnBackdrop(event,'movie-modal')">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="movie-modal-title">Add Movie</h2>
+        <button class="modal-close" onclick="closeModal('movie-modal')">✕</button>
+      </div>
+      <div class="tmdb-search-wrap" id="tmdb-search-wrap">
+        <label class="form-label">Search TMDB to auto-fill</label>
+        <div class="tmdb-search-row">
+          <input type="text" class="form-input" id="tmdb-search-input" placeholder="Movie title…" onkeydown="if(event.key==='Enter')searchTMDB()" />
+          <button class="btn-secondary" id="tmdb-search-btn" onclick="searchTMDB()">Search</button>
+        </div>
+        <div class="tmdb-results" id="tmdb-results"></div>
+      </div>
+      <form id="movie-form" onsubmit="saveMovie(event)" autocomplete="off">
+        <input type="hidden" id="movie-id" />
+        <div class="form-grid">
+          <div class="form-group form-col-2">
+            <label class="form-label" for="movie-title">Title <span class="required">*</span></label>
+            <input type="text" class="form-input" id="movie-title" required placeholder="Movie title" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="movie-year">Year</label>
+            <input type="number" class="form-input" id="movie-year" min="1900" max="2100" placeholder="2024" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="movie-runtime">Runtime (min)</label>
+            <input type="number" class="form-input" id="movie-runtime" min="1" placeholder="120" />
+          </div>
+          <div class="form-group form-col-2">
+            <label class="form-label" for="movie-director">Director</label>
+            <input type="text" class="form-input" id="movie-director" placeholder="Director name" />
+          </div>
+          <div class="form-group form-col-2">
+            <label class="form-label" for="movie-genre">Genres <span class="hint">(comma-separated)</span></label>
+            <input type="text" class="form-input" id="movie-genre" placeholder="Action, Sci-Fi, Drama" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="movie-status">My Status</label>
+            <select class="form-input" id="movie-status" onchange="toggleRatingField()">
+              <option value="unwatched">Unwatched</option>
+              <option value="unfinished">Unfinished</option>
+              <option value="watched">Watched</option>
+            </select>
+          </div>
+          <div class="form-group" id="rating-group">
+            <label class="form-label">My Rating <span class="hint">(1–10)</span></label>
+            <div class="star-row-10" id="star-picker" role="group" aria-label="Rating 1 to 10">
+              <span class="star" data-val="1" onclick="setRating(1)">★</span>
+              <span class="star" data-val="2" onclick="setRating(2)">★</span>
+              <span class="star" data-val="3" onclick="setRating(3)">★</span>
+              <span class="star" data-val="4" onclick="setRating(4)">★</span>
+              <span class="star" data-val="5" onclick="setRating(5)">★</span>
+              <span class="star" data-val="6" onclick="setRating(6)">★</span>
+              <span class="star" data-val="7" onclick="setRating(7)">★</span>
+              <span class="star" data-val="8" onclick="setRating(8)">★</span>
+              <span class="star" data-val="9" onclick="setRating(9)">★</span>
+              <span class="star" data-val="10" onclick="setRating(10)">★</span>
+            </div>
+            <div class="rating-display" id="rating-display">Not rated</div>
+            <input type="hidden" id="movie-rating" />
+          </div>
+          <div class="form-group form-col-2">
+            <label class="form-label" for="movie-series">Series</label>
+            <select class="form-input" id="movie-series"><option value="">— None —</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="movie-series-order">Order in Series</label>
+            <input type="number" class="form-input" id="movie-series-order" min="1" placeholder="1" />
+          </div>
+          <div class="form-group form-col-full">
+            <label class="form-label" for="movie-synopsis">Synopsis</label>
+            <textarea class="form-input form-textarea" id="movie-synopsis" rows="3" placeholder="Brief description…"></textarea>
+          </div>
+          <div class="form-group form-col-full">
+            <label class="form-label" for="movie-poster">Poster URL</label>
+            <input type="url" class="form-input" id="movie-poster" placeholder="https://…" oninput="previewPoster(this.value)" />
+            <div class="poster-preview-wrap" id="poster-preview-wrap" style="display:none">
+              <img id="poster-preview" class="poster-preview" src="" alt="Poster preview" />
+            </div>
+          </div>
+          <div class="form-group form-col-full">
+            <label class="form-label" for="movie-notes">My Notes <span class="hint">(private to your profile)</span></label>
+            <textarea class="form-input form-textarea" id="movie-notes" rows="2" placeholder="Your thoughts…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" onclick="closeModal('movie-modal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="movie-save-btn">Save Movie</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: SERIES ===== -->
+  <div class="modal-overlay" id="series-modal" onclick="closeOnBackdrop(event,'series-modal')">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 class="modal-title" id="series-modal-title">Create Series</h2>
+        <button class="modal-close" onclick="closeModal('series-modal')">✕</button>
+      </div>
+      <form id="series-form" onsubmit="saveSeries(event)" autocomplete="off">
+        <input type="hidden" id="series-id" />
+        <div class="form-grid">
+          <div class="form-group form-col-full">
+            <label class="form-label" for="series-name">Series Name <span class="required">*</span></label>
+            <input type="text" class="form-input" id="series-name" required placeholder="e.g. Marvel Cinematic Universe" />
+          </div>
+          <div class="form-group form-col-full">
+            <label class="form-label" for="series-description">Description</label>
+            <textarea class="form-input form-textarea" id="series-description" rows="3" placeholder="Brief description…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" onclick="closeModal('series-modal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="series-save-btn">Save Series</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: DETAIL ===== -->
+  <div class="modal-overlay" id="detail-modal" onclick="closeOnBackdrop(event,'detail-modal')">
+    <div class="modal modal-detail" role="dialog" aria-modal="true">
+      <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <!-- ===== CONFIRM ===== -->
+  <div class="modal-overlay" id="confirm-modal" onclick="closeOnBackdrop(event,'confirm-modal')">
+    <div class="modal modal-confirm" role="dialog" aria-modal="true">
+      <div class="confirm-icon">⚠️</div>
+      <h3 class="confirm-title" id="confirm-title">Are you sure?</h3>
+      <p class="confirm-msg" id="confirm-msg">This action cannot be undone.</p>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button class="btn-danger" id="confirm-ok-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="app.js"></script>
+</body>
+</html>
