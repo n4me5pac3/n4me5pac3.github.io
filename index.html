@@ -3,407 +3,626 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>nsMovies – Your Personal Movie List</title>
-  <meta name="description" content="Track your movies — watched, unwatched, and unfinished." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <title>nsMovies — Your Personal Film Library</title>
+  <meta name="description" content="A personal film tracking app. Log what you've watched, rate movies, and manage your watchlist across multiple profiles." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/%3E%3Cline x1='8' y1='4' x2='8' y2='20'/%3E%3Cline x1='16' y1='4' x2='16' y2='20'/%3E%3Cline x1='4' y1='8' x2='8' y2='8'/%3E%3Cline x1='4' y1='16' x2='8' y2='16'/%3E%3Cline x1='16' y1='8' x2='20' y2='8'/%3E%3Cline x1='16' y1='16' x2='20' y2='16'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ===== SCREEN: LOGIN ===== -->
-  <div id="screen-login" class="screen active">
-    <div class="auth-wrap">
-      <div class="auth-card">
-        <div class="auth-logo">
-          <span class="logo-icon">🎬</span>
-          <span class="logo-text">nsMovies</span>
-        </div>
-        <h1 class="auth-title" id="auth-title">Sign In</h1>
-        <p class="auth-sub" id="auth-sub">Welcome back. Sign in to your account.</p>
-
-        <!-- LOGIN FORM -->
-        <form id="login-form" onsubmit="handleLogin(event)" autocomplete="on">
-          <div class="form-group">
-            <label class="form-label" for="login-email">Email</label>
-            <input type="email" class="form-input" id="login-email" placeholder="you@example.com" required autocomplete="email" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="login-password">Password</label>
-            <div class="password-wrap">
-              <input type="password" class="form-input" id="login-password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
-              <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)" aria-label="Show password" tabindex="-1">
-                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="auth-error" id="login-error"></div>
-          <button type="submit" class="btn-primary btn-full" id="login-btn">Sign In</button>
-        </form>
-
-        <!-- REGISTER FORM -->
-        <form id="register-form" onsubmit="handleRegister(event)" autocomplete="on" style="display:none">
-          <div class="form-group">
-            <label class="form-label" for="reg-name">Account Name</label>
-            <input type="text" class="form-input" id="reg-name" placeholder="My Movie Vault" required autocomplete="name" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="reg-email">Email</label>
-            <input type="email" class="form-input" id="reg-email" placeholder="you@example.com" required autocomplete="email" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="reg-password">Password <span class="hint">(min. 6 characters)</span></label>
-            <div class="password-wrap">
-              <input type="password" class="form-input" id="reg-password" placeholder="••••••••" required autocomplete="new-password" minlength="6" />
-              <button type="button" class="pw-toggle" onclick="togglePw('reg-password', this)" aria-label="Show password" tabindex="-1">
-                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="auth-error" id="reg-error"></div>
-          <button type="submit" class="btn-primary btn-full" id="reg-btn">Create Account</button>
-        </form>
-
-        <div class="auth-toggle">
-          <span id="auth-toggle-msg">Don't have an account?</span>
-          <button class="auth-toggle-btn" id="auth-toggle-btn" onclick="toggleAuthMode()">Create one</button>
-        </div>
+<!-- ══════════════════════════════════════════
+     SCREEN: LOGIN / REGISTER
+══════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-wordmark">
+      <div>
+        <span class="wordmark-ns">ns</span><span class="wordmark-movies">Movies</span>
       </div>
+      <p>Personal Film Library</p>
     </div>
-  </div>
 
-  <!-- ===== SCREEN: PROFILE SELECTOR ===== -->
-  <div id="screen-profiles" class="screen">
-    <div class="profiles-wrap">
-      <div class="profiles-account-name" id="profiles-account-name">My Account</div>
-      <h2 class="profiles-title">Who's watching?</h2>
-      <div class="profiles-grid" id="profiles-grid"></div>
-      <div class="profiles-actions">
-        <button class="btn-ghost" onclick="logout()">Sign Out</button>
-      </div>
+    <!-- Tab switcher -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="showAuthPanel('login')">Sign In</div>
+      <div class="auth-tab" id="tab-register" onclick="showAuthPanel('register')">Create Account</div>
     </div>
-  </div>
 
-  <!-- ===== SCREEN: MAIN APP ===== -->
-  <div id="screen-app" class="screen">
-    <header class="header" id="app-header">
-      <div class="header-inner">
-        <a href="#" class="logo" onclick="showView('movies')">
-          <span class="logo-icon">🎬</span>
-          <span class="logo-text">nsMovies</span>
-        </a>
-        <nav class="nav" id="main-nav">
-          <button class="nav-btn active" id="nav-movies" onclick="showView('movies')">Movies</button>
-          <button class="nav-btn" id="nav-series" onclick="showView('series')">Series</button>
-        </nav>
-        <div class="header-actions">
-          <button class="btn-icon" title="Search" onclick="toggleSearch()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          </button>
-          <button class="profile-avatar-btn" id="active-profile-btn" title="Switch profile" onclick="switchProfile()">
-            <span class="profile-avatar-emoji" id="active-profile-emoji">🎬</span>
-            <img class="profile-avatar-img" id="active-profile-img" src="" alt="" style="display:none" />
-          </button>
-          <button class="btn-primary" id="add-movie-btn" onclick="openMovieModal()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Movie
-          </button>
+    <!-- Login panel -->
+    <div id="auth-panel-login">
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input id="login-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
         </div>
-      </div>
-      <div class="search-bar" id="search-bar">
-        <div class="search-inner">
-          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="search-input" placeholder="Search movies…" oninput="handleSearch(this.value)" autocomplete="off" />
-          <button class="search-clear" onclick="clearSearch()">✕</button>
-        </div>
-      </div>
-    </header>
-
-    <main class="main" id="main-content">
-      <div id="view-movies" class="view active">
-        <div class="filter-bar">
-          <div class="filters">
-            <button class="filter-tab active" id="filter-all" onclick="setFilter('all')">All</button>
-            <button class="filter-tab" id="filter-unwatched" onclick="setFilter('unwatched')">Unwatched</button>
-            <button class="filter-tab" id="filter-unfinished" onclick="setFilter('unfinished')">Unfinished</button>
-            <button class="filter-tab" id="filter-watched" onclick="setFilter('watched')">Watched</button>
-          </div>
-          <select class="sort-select" id="sort-select" onchange="setSort(this.value)">
-            <option value="added">Recently Added</option>
-            <option value="title">Title A–Z</option>
-            <option value="year">Year</option>
-            <option value="rating">My Rating</option>
-            <option value="watched">Recently Watched</option>
-          </select>
-        </div>
-        <div class="stats-bar" id="stats-bar">
-          <span class="stat-item" id="stat-total"><strong>0</strong> Movies</span>
-          <span class="stat-sep">·</span>
-          <span class="stat-item" id="stat-watched"><strong>0</strong> Watched</span>
-          <span class="stat-sep">·</span>
-          <span class="stat-item" id="stat-unwatched"><strong>0</strong> Unwatched</span>
-          <span class="stat-sep">·</span>
-          <span class="stat-item" id="stat-unfinished"><strong>0</strong> Unfinished</span>
-        </div>
-        <div class="movies-grid" id="movies-grid"></div>
-        <div class="empty-state" id="empty-state" style="display:none">
-          <div class="empty-icon">🎬</div>
-          <h3>No movies here yet</h3>
-          <p>Add your first movie to get started.</p>
-          <button class="btn-primary" onclick="openMovieModal()">Add Movie</button>
-        </div>
-        <div class="loading-state" id="loading-state">
-          <div class="spinner"></div>
-          <p>Loading movies…</p>
-        </div>
-      </div>
-
-      <div id="view-series" class="view">
-        <div class="series-header">
-          <h2 class="section-title">Series Collections</h2>
-          <button class="btn-primary" onclick="openSeriesModal()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Series
-          </button>
-        </div>
-        <div class="series-grid" id="series-grid"></div>
-        <div class="empty-state" id="series-empty-state" style="display:none">
-          <div class="empty-icon">🎞️</div>
-          <h3>No series yet</h3>
-          <p>Create a series to group related movies together.</p>
-          <button class="btn-primary" onclick="openSeriesModal()">Create Series</button>
-        </div>
-        <div class="loading-state" id="series-loading-state">
-          <div class="spinner"></div>
-          <p>Loading series…</p>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ===== MODAL: PROFILE ===== -->
-  <div class="modal-overlay" id="profile-modal" onclick="closeOnBackdrop(event,'profile-modal')">
-    <div class="modal modal-sm" role="dialog" aria-modal="true">
-      <div class="modal-header">
-        <h2 class="modal-title" id="profile-modal-title">Add Profile</h2>
-        <button class="modal-close" onclick="closeModal('profile-modal')">✕</button>
-      </div>
-      <form id="profile-form" onsubmit="saveProfile(event)" autocomplete="off">
-        <input type="hidden" id="profile-edit-id" />
-        <div class="form-grid" style="padding:0 24px">
-
-          <!-- Photo upload -->
-          <div class="form-group form-col-full">
-            <label class="form-label">Profile Photo <span class="hint">(optional — replaces emoji)</span></label>
-            <div class="avatar-upload-wrap">
-              <div class="avatar-upload-preview" id="avatar-upload-preview">
-                <span id="avatar-preview-emoji">🎬</span>
-              </div>
-              <div class="avatar-upload-actions">
-                <label class="btn-secondary" for="profile-image-input" style="cursor:pointer;font-size:13px;padding:8px 14px">
-                  📷 Upload Photo
-                </label>
-                <input type="file" id="profile-image-input" accept="image/*" onchange="handleProfileImage(event)" style="display:none" />
-                <button type="button" class="btn-ghost" id="clear-avatar-btn" onclick="clearProfileImage()" style="display:none;font-size:13px">Remove</button>
-              </div>
-            </div>
-            <input type="hidden" id="profile-avatar-url" />
-          </div>
-
-          <div class="form-group form-col-full">
-            <label class="form-label" for="profile-name">Profile Name</label>
-            <input type="text" class="form-input" id="profile-name" required maxlength="20" placeholder="e.g. Alex" />
-          </div>
-
-          <div class="form-group form-col-full">
-            <label class="form-label">Avatar Emoji <span class="hint">(used when no photo)</span></label>
-            <div class="emoji-picker" id="emoji-picker">
-              <span class="emoji-opt selected" data-emoji="🎬" onclick="selectEmoji('🎬')">🎬</span>
-              <span class="emoji-opt" data-emoji="🎭" onclick="selectEmoji('🎭')">🎭</span>
-              <span class="emoji-opt" data-emoji="🍿" onclick="selectEmoji('🍿')">🍿</span>
-              <span class="emoji-opt" data-emoji="🌟" onclick="selectEmoji('🌟')">🌟</span>
-              <span class="emoji-opt" data-emoji="🔥" onclick="selectEmoji('🔥')">🔥</span>
-              <span class="emoji-opt" data-emoji="🎮" onclick="selectEmoji('🎮')">🎮</span>
-              <span class="emoji-opt" data-emoji="🎯" onclick="selectEmoji('🎯')">🎯</span>
-              <span class="emoji-opt" data-emoji="🌙" onclick="selectEmoji('🌙')">🌙</span>
-              <span class="emoji-opt" data-emoji="⭐" onclick="selectEmoji('⭐')">⭐</span>
-              <span class="emoji-opt" data-emoji="🦁" onclick="selectEmoji('🦁')">🦁</span>
-              <span class="emoji-opt" data-emoji="🐉" onclick="selectEmoji('🐉')">🐉</span>
-              <span class="emoji-opt" data-emoji="🚀" onclick="selectEmoji('🚀')">🚀</span>
-            </div>
-            <input type="hidden" id="profile-emoji" value="🎬" />
-          </div>
-
-          <div class="form-group form-col-full">
-            <label class="form-label">Color</label>
-            <div class="color-picker" id="color-picker">
-              <span class="color-opt selected" data-color="#4f8ef7" onclick="selectColor('#4f8ef7')" style="background:#4f8ef7"></span>
-              <span class="color-opt" data-color="#3fb950" onclick="selectColor('#3fb950')" style="background:#3fb950"></span>
-              <span class="color-opt" data-color="#d29922" onclick="selectColor('#d29922')" style="background:#d29922"></span>
-              <span class="color-opt" data-color="#f85149" onclick="selectColor('#f85149')" style="background:#f85149"></span>
-              <span class="color-opt" data-color="#a371f7" onclick="selectColor('#a371f7')" style="background:#a371f7"></span>
-              <span class="color-opt" data-color="#fd7e14" onclick="selectColor('#fd7e14')" style="background:#fd7e14"></span>
-              <span class="color-opt" data-color="#20c997" onclick="selectColor('#20c997')" style="background:#20c997"></span>
-              <span class="color-opt" data-color="#e91e8c" onclick="selectColor('#e91e8c')" style="background:#e91e8c"></span>
-            </div>
-            <input type="hidden" id="profile-color" value="#4f8ef7" />
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div class="input-wrap">
+            <input id="login-password" type="password" class="form-input" placeholder="Your password" autocomplete="current-password" required />
+            <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)" title="Show password">
+              <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-ghost" onclick="closeModal('profile-modal')">Cancel</button>
-          <button type="submit" class="btn-primary">Save Profile</button>
+        <div id="login-error" class="form-error"></div>
+        <button id="login-btn" type="submit" class="btn-primary" style="width:100%;margin-top:4px">Sign In</button>
+      </form>
+    </div>
+
+    <!-- Register panel -->
+    <div id="auth-panel-register" style="display:none">
+      <form id="register-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Account Name</label>
+          <input id="reg-name" type="text" class="form-input" placeholder="e.g. The Smiths" autocomplete="name" required />
         </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input id="reg-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <div class="input-wrap">
+            <input id="reg-password" type="password" class="form-input" placeholder="Choose a strong password" autocomplete="new-password" required />
+            <button type="button" class="pw-toggle" onclick="togglePw('reg-password', this)" title="Show password">
+              <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="reg-error" class="form-error"></div>
+        <button id="reg-btn" type="submit" class="btn-primary" style="width:100%;margin-top:4px">Create Account</button>
       </form>
     </div>
   </div>
+</div>
 
-  <!-- ===== MODAL: MOVIE ===== -->
-  <div class="modal-overlay" id="movie-modal" onclick="closeOnBackdrop(event,'movie-modal')">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div class="modal-header">
-        <h2 class="modal-title" id="movie-modal-title">Add Movie</h2>
-        <button class="modal-close" onclick="closeModal('movie-modal')">✕</button>
-      </div>
-      <div class="tmdb-search-wrap" id="tmdb-search-wrap">
-        <label class="form-label">Search TMDB to auto-fill</label>
-        <div class="tmdb-search-row">
-          <input type="text" class="form-input" id="tmdb-search-input" placeholder="Movie title…" onkeydown="if(event.key==='Enter')searchTMDB()" />
-          <button class="btn-secondary" id="tmdb-search-btn" onclick="searchTMDB()">Search</button>
+<!-- ══════════════════════════════════════════
+     SCREEN: PROFILE SELECTION (Netflix-style)
+══════════════════════════════════════════ -->
+<div id="screen-profiles" class="screen">
+  <div class="profiles-header">
+    <div class="profiles-wordmark">
+      <span class="wm-ns">ns</span><span class="wm-movies">Movies</span>
+    </div>
+    <h1>Who's watching?</h1>
+    <p><span id="profiles-account-name" class="account-name"></span></p>
+  </div>
+
+  <div id="profiles-grid" class="profiles-grid">
+    <!-- Rendered by JS -->
+  </div>
+
+  <div class="profiles-footer">
+    <button class="btn-ghost" onclick="openModal('settings-modal')" style="font-size:0.8rem;padding:8px 16px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+    <button class="btn-ghost" onclick="logout()" style="font-size:0.8rem;padding:8px 16px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN: APP (Main)
+══════════════════════════════════════════ -->
+<div id="screen-app" class="screen">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-wordmark">
+      <span class="wm-ns">ns</span><span class="wm-movies">Movies</span>
+    </div>
+
+    <div class="header-right">
+      <!-- Active Profile button -->
+      <button id="active-profile-btn" class="active-profile-btn" onclick="switchProfile()" title="Switch profile">
+        <div id="active-profile-avatar-wrap" class="active-profile-avatar">
+          <span id="active-profile-initials"></span>
+          <img id="active-profile-img" src="" alt="" style="display:none" />
         </div>
-        <div class="tmdb-results" id="tmdb-results"></div>
+        <span id="active-profile-name" class="active-profile-name"></span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-faint)"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <!-- Settings -->
+      <button class="header-icon-btn" onclick="openModal('settings-modal')" title="Account Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+
+      <!-- Logout -->
+      <button class="header-icon-btn" onclick="logout()" title="Sign out">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- App body -->
+  <main class="app-body">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Movies</div>
+        <div class="stat-value" id="stat-total">0</div>
       </div>
-      <form id="movie-form" onsubmit="saveMovie(event)" autocomplete="off">
+      <div class="stat-card">
+        <div class="stat-label">Watched</div>
+        <div class="stat-value" id="stat-watched">
+          0 <span style="font-size:14px; color:var(--text-muted); font-weight:500;">(0%)</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Score</div>
+        <div class="stat-value" id="stat-avg-score" style="color:#f0ba4a;">
+          0 <span style="font-size:14px; color:var(--text-muted); font-weight:500;">/10</span>
+        </div>
+      </div>
+      <div class="stat-card" style="justify-content:center; overflow:hidden;">
+        <div class="stat-label" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <span>Top Rated</span>
+          <span id="stat-top-rated-score" style="color:#f0ba4a; display:flex; align-items:center; gap:3px; font-weight:600; font-size:11px;"></span>
+        </div>
+        <div class="stat-value" id="stat-top-rated" style="font-size:16px; line-height:1.3; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          <span style="color:var(--text-muted); font-size:15px;">None</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input id="search-input" type="text" class="search-input" placeholder="Search movies, directors..." oninput="handleSearch(this.value)" />
+        <button id="search-clear-btn" class="search-clear" onclick="clearSearch()" title="Clear search">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="filter-tabs">
+        <button id="filter-all"        class="filter-tab active" onclick="setFilter('all')">All</button>
+        <button id="filter-unwatched"  class="filter-tab"        onclick="setFilter('unwatched')">Unwatched</button>
+        <button id="filter-watched"    class="filter-tab"        onclick="setFilter('watched')">Watched</button>
+        <button id="filter-unfinished" class="filter-tab"        onclick="setFilter('unfinished')">Unfinished</button>
+      </div>
+
+      <select id="sort-select" class="sort-select" onchange="setSort(this.value)" title="Sort by">
+        <option value="added">Added</option>
+        <option value="title">Title</option>
+        <option value="year">Year</option>
+        <option value="rating">Rating</option>
+        <option value="watched">Watched date</option>
+      </select>
+
+      <button id="sort-dir-btn" class="header-icon-btn" onclick="toggleSortDir()" title="Toggle sort direction" style="flex-shrink:0;">
+        <svg id="sort-dir-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </button>
+
+      <button id="multiselect-toggle-btn" class="header-icon-btn" onclick="toggleMultiSelect()" title="Select multiple movies" style="flex-shrink:0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+
+      <button class="toolbar-add-btn" onclick="openMovieModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Movie
+      </button>
+    </div>
+
+    <!-- Multi-select action bar -->
+    <div id="multiselect-bar" style="display:none; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); margin-bottom:4px;">
+      <span id="multiselect-count" style="font-size:13px; color:var(--text-muted); font-weight:500;">0 selected</span>
+      <button class="btn-ghost" style="font-size:11px; padding:4px 8px;" onclick="selectAllMovies()">Select All</button>
+      <button class="btn-ghost" style="font-size:11px; padding:4px 8px;" onclick="invertSelection()">Invert</button>
+      <span style="color:var(--border)">|</span>
+      <span style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px;">Set status:</span>
+      <button class="filter-tab" onclick="bulkSetStatus('unwatched')">Unwatched</button>
+      <button class="filter-tab" onclick="bulkSetStatus('unfinished')">Unfinished</button>
+      <button class="filter-tab" onclick="bulkSetStatus('watched')">Watched</button>
+      <button class="btn-ghost" style="margin-left:auto; font-size:12px;" onclick="clearMultiSelect()">Clear</button>
+      <button class="btn-ghost" style="font-size:12px;" onclick="toggleMultiSelect()">Done</button>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loading-state" class="loading-state" style="display:flex">
+      <div class="spinner"></div>
+      <p style="font-size:0.85rem;color:var(--text-muted)">Loading your library…</p>
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="empty-state" style="display:none">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--text-faint)"><rect x="2" y="2" width="20" height="20" rx="3"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+      <h3>No movies found</h3>
+      <p>Add your first movie using the button above.</p>
+    </div>
+
+    <!-- Movies grid -->
+    <div id="movies-grid" class="movies-grid"></div>
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: ADD / EDIT MOVIE
+══════════════════════════════════════════ -->
+<dialog id="movie-modal" class="modal-dlg" onclick="closeOnBackdrop(event,'movie-modal')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="movie-modal-title">
+    <div class="modal-header">
+      <span class="modal-title" id="movie-modal-title">Add Movie</span>
+      <button class="modal-close" onclick="closeModal('movie-modal')" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- TMDB Search Section -->
+      <div id="movie-search-section">
+        <div class="form-section-label" style="margin-top:0">Search Movie Database</div>
+        <div class="tmdb-search-wrap">
+          <span class="tmdb-search-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input id="tmdb-search-input" type="text" class="tmdb-search-input" placeholder="Search by title…" oninput="debouncedSearchTMDB()" />
+          <div id="tmdb-search-spinner" class="tmdb-search-spinner"><div class="spinner"></div></div>
+        </div>
+
+        <div id="tmdb-results"></div>
+
+        <div id="add-manual-wrap" class="add-manual-wrap">
+          <button class="add-manual-btn" onclick="showManualForm()">
+            Can't find the movie? Add it manually
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk Add Review Section -->
+      <div id="movie-review-section" style="display:none;">
+        <div class="form-section-label" style="margin-top:0">Review Movies to Add</div>
+        <div id="review-movies-list" style="display:flex; flex-direction:column; gap:8px; max-height:400px; overflow-y:auto; padding-right:4px;">
+          <!-- Items injected via JS -->
+        </div>
+      </div>
+
+      <!-- Movie form (hidden until TMDB result selected or manual) -->
+      <form id="movie-form" onsubmit="saveMovie(event)" style="display:none">
         <input type="hidden" id="movie-id" />
-        <div class="form-grid">
-          <div class="form-group form-col-2">
-            <label class="form-label" for="movie-title">Title <span class="required">*</span></label>
-            <input type="text" class="form-input" id="movie-title" required placeholder="Movie title" />
-          </div>
+        <input type="hidden" id="movie-tmdb-id" />
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div class="form-section-label" style="margin:0">Film Details</div>
+          <button type="button" id="back-to-search-btn" class="btn-ghost" style="padding:4px 8px; font-size:0.75rem;" onclick="backToSearch()">
+            &larr; Back to Search
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-title">Title</label>
+          <input id="movie-title" type="text" class="form-input" placeholder="Film title" required />
+        </div>
+
+        <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="movie-year">Year</label>
-            <input type="number" class="form-input" id="movie-year" min="1900" max="2100" placeholder="2024" />
+            <input id="movie-year" type="number" class="form-input" placeholder="2024" min="1888" max="2099" />
           </div>
           <div class="form-group">
             <label class="form-label" for="movie-runtime">Runtime (min)</label>
-            <input type="number" class="form-input" id="movie-runtime" min="1" placeholder="120" />
-          </div>
-          <div class="form-group form-col-2">
-            <label class="form-label" for="movie-director">Director</label>
-            <input type="text" class="form-input" id="movie-director" placeholder="Director name" />
-          </div>
-          <div class="form-group form-col-2">
-            <label class="form-label" for="movie-genre">Genres <span class="hint">(comma-separated)</span></label>
-            <input type="text" class="form-input" id="movie-genre" placeholder="Action, Sci-Fi, Drama" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="movie-status">My Status</label>
-            <select class="form-input" id="movie-status" onchange="toggleRatingField()">
-              <option value="unwatched">Unwatched</option>
-              <option value="unfinished">Unfinished</option>
-              <option value="watched">Watched</option>
-            </select>
-          </div>
-          <div class="form-group" id="rating-group">
-            <label class="form-label">My Rating <span class="hint">(1–10)</span></label>
-            <div class="star-row-10" id="star-picker" role="group" aria-label="Rating 1 to 10">
-              <span class="star" data-val="1" onclick="setRating(1)">★</span>
-              <span class="star" data-val="2" onclick="setRating(2)">★</span>
-              <span class="star" data-val="3" onclick="setRating(3)">★</span>
-              <span class="star" data-val="4" onclick="setRating(4)">★</span>
-              <span class="star" data-val="5" onclick="setRating(5)">★</span>
-              <span class="star" data-val="6" onclick="setRating(6)">★</span>
-              <span class="star" data-val="7" onclick="setRating(7)">★</span>
-              <span class="star" data-val="8" onclick="setRating(8)">★</span>
-              <span class="star" data-val="9" onclick="setRating(9)">★</span>
-              <span class="star" data-val="10" onclick="setRating(10)">★</span>
-            </div>
-            <div class="rating-display" id="rating-display">Not rated</div>
-            <input type="hidden" id="movie-rating" />
-          </div>
-          <div class="form-group form-col-2">
-            <label class="form-label" for="movie-series">Series</label>
-            <select class="form-input" id="movie-series"><option value="">— None —</option></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="movie-series-order">Order in Series</label>
-            <input type="number" class="form-input" id="movie-series-order" min="1" placeholder="1" />
-          </div>
-          <div class="form-group form-col-full">
-            <label class="form-label" for="movie-synopsis">Synopsis</label>
-            <textarea class="form-input form-textarea" id="movie-synopsis" rows="3" placeholder="Brief description…"></textarea>
-          </div>
-          <div class="form-group form-col-full">
-            <label class="form-label" for="movie-poster">Poster URL</label>
-            <input type="url" class="form-input" id="movie-poster" placeholder="https://…" oninput="previewPoster(this.value)" />
-            <div class="poster-preview-wrap" id="poster-preview-wrap" style="display:none">
-              <img id="poster-preview" class="poster-preview" src="" alt="Poster preview" />
-            </div>
-          </div>
-          <div class="form-group form-col-full">
-            <label class="form-label" for="movie-notes">My Notes <span class="hint">(private to your profile)</span></label>
-            <textarea class="form-input form-textarea" id="movie-notes" rows="2" placeholder="Your thoughts…"></textarea>
+            <input id="movie-runtime" type="number" class="form-input" placeholder="120" min="1" />
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-ghost" onclick="closeModal('movie-modal')">Cancel</button>
-          <button type="submit" class="btn-primary" id="movie-save-btn">Save Movie</button>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-director">Director</label>
+          <input id="movie-director" type="text" class="form-input" placeholder="Director name" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-genre">Genres</label>
+          <input id="movie-genre" type="text" class="form-input" placeholder="Drama, Thriller, Comedy…" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-synopsis">Synopsis</label>
+          <textarea id="movie-synopsis" class="form-input" placeholder="Brief synopsis…"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-poster">Poster URL</label>
+          <input id="movie-poster" type="url" class="form-input" placeholder="https://…" oninput="previewPoster(this.value)" />
+          <div id="poster-preview-wrap" class="poster-preview-wrap">
+            <img id="poster-preview" class="poster-preview" src="" alt="Poster preview" />
+          </div>
+        </div>
+
+        <div class="form-section-label">My Tracking</div>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-status">Status</label>
+          <select id="movie-status" class="form-input" onchange="toggleRatingField()">
+            <option value="unwatched">Unwatched</option>
+            <option value="watched">Watched</option>
+            <option value="unfinished">Unfinished</option>
+          </select>
+        </div>
+
+        <div id="rating-group" class="form-group" style="display:none">
+          <label class="form-label">My Rating</label>
+          <input type="hidden" id="movie-rating" value="0" />
+          <div class="star-picker-group">
+            <div id="star-picker">
+              <!-- 10 stars -->
+              <span class="star" onclick="setRating(1)" title="1">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(2)" title="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(3)" title="3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(4)" title="4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(5)" title="5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(6)" title="6">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(7)" title="7">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(8)" title="8">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(9)" title="9">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+              <span class="star" onclick="setRating(10)" title="10">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </span>
+            </div>
+            <div id="rating-display" class="rating-display">Not rated</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="movie-notes">Personal Notes</label>
+          <textarea id="movie-notes" class="form-input" placeholder="Your thoughts…"></textarea>
         </div>
       </form>
-    </div>
-  </div>
 
-  <!-- ===== MODAL: SERIES ===== -->
-  <div class="modal-overlay" id="series-modal" onclick="closeOnBackdrop(event,'series-modal')">
-    <div class="modal modal-sm" role="dialog" aria-modal="true">
-      <div class="modal-header">
-        <h2 class="modal-title" id="series-modal-title">Create Series</h2>
-        <button class="modal-close" onclick="closeModal('series-modal')">✕</button>
-      </div>
-      <form id="series-form" onsubmit="saveSeries(event)" autocomplete="off">
-        <input type="hidden" id="series-id" />
-        <div class="form-grid">
-          <div class="form-group form-col-full">
-            <label class="form-label" for="series-name">Series Name <span class="required">*</span></label>
-            <input type="text" class="form-input" id="series-name" required placeholder="e.g. Marvel Cinematic Universe" />
-          </div>
-          <div class="form-group form-col-full">
-            <label class="form-label" for="series-description">Description</label>
-            <textarea class="form-input form-textarea" id="series-description" rows="3" placeholder="Brief description…"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-ghost" onclick="closeModal('series-modal')">Cancel</button>
-          <button type="submit" class="btn-primary" id="series-save-btn">Save Series</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- ===== MODAL: DETAIL ===== -->
-  <div class="modal-overlay" id="detail-modal" onclick="closeOnBackdrop(event,'detail-modal')">
-    <div class="modal modal-detail" role="dialog" aria-modal="true">
-      <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
-      <div id="detail-content"></div>
-    </div>
-  </div>
-
-  <!-- ===== CONFIRM ===== -->
-  <div class="modal-overlay" id="confirm-modal" onclick="closeOnBackdrop(event,'confirm-modal')">
-    <div class="modal modal-confirm" role="dialog" aria-modal="true">
-      <div class="confirm-icon">⚠️</div>
-      <h3 class="confirm-title" id="confirm-title">Are you sure?</h3>
-      <p class="confirm-msg" id="confirm-msg">This action cannot be undone.</p>
-      <div class="modal-footer">
-        <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
-        <button class="btn-danger" id="confirm-ok-btn">Delete</button>
+    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+      <div id="pending-movies-count" style="font-size:14px; font-weight:600; color:var(--text-primary); visibility:hidden;">0 selected</div>
+      <div style="display:flex; gap:10px; margin-left:auto;">
+        <button id="modal-cancel-btn" class="btn-ghost" onclick="closeModal('movie-modal')">Cancel</button>
+        <button id="review-back-btn" class="btn-ghost" onclick="backToSearchFromReview()" style="display:none;">Back</button>
+        <button id="review-movies-btn" class="btn-primary" onclick="showReviewSection()" style="display:none;">Review & Add</button>
+        <button id="confirm-bulk-btn" class="btn-primary" onclick="confirmBulkAdd()" style="display:none;">Confirm & Add</button>
+        <button id="movie-save-btn" class="btn-primary" onclick="document.getElementById('movie-form').requestSubmit()" style="display:none">Save Movie</button>
       </div>
     </div>
   </div>
+</dialog>
 
-  <div class="toast-container" id="toast-container"></div>
-  <script src="app.js"></script>
+<!-- ══════════════════════════════════════════
+     MODAL: MOVIE DETAIL
+══════════════════════════════════════════ -->
+<dialog id="detail-modal" class="modal-dlg" onclick="closeOnBackdrop(event,'detail-modal')">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header" style="position:absolute;top:0;left:0;right:0;background:transparent;border-bottom:none;z-index:1;padding:12px 16px">
+      <span></span>
+      <button class="modal-close" onclick="closeModal('detail-modal')" title="Close" style="background:rgba(10,10,12,0.7);backdrop-filter:blur(4px)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="detail-content" style="overflow-y:auto;max-height:calc(100vh - 40px);position:relative">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</dialog>
+
+<!-- ══════════════════════════════════════════
+     MODAL: PROFILE CREATE / EDIT
+══════════════════════════════════════════ -->
+<dialog id="profile-modal" class="modal-dlg" onclick="closeOnBackdrop(event,'profile-modal')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+    <div class="modal-header">
+      <span class="modal-title" id="profile-modal-title">Add Profile</span>
+      <button class="modal-close" onclick="closeModal('profile-modal')" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form id="profile-form" onsubmit="saveProfile(event)">
+        <input type="hidden" id="profile-edit-id" />
+        <input type="hidden" id="profile-avatar-url" />
+        <input type="hidden" id="profile-color" value="#3b82f6" />
+
+        <!-- Avatar upload -->
+        <div class="form-group">
+          <label class="form-label">Profile Photo</label>
+          <div class="avatar-upload-area">
+            <div id="avatar-upload-preview" class="avatar-upload-preview">
+              <span id="avatar-preview-initials">?</span>
+            </div>
+            <div class="avatar-upload-actions">
+              <label for="profile-image-input" class="avatar-upload-label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload Photo
+              </label>
+              <input type="file" id="profile-image-input" accept="image/*" style="display:none" onchange="handleProfileImage(event)" />
+              <button type="button" id="clear-avatar-btn" class="clear-avatar-btn" onclick="clearProfileImage()">Remove photo</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="profile-name">Display Name</label>
+          <input id="profile-name" type="text" class="form-input" placeholder="e.g. Alice" required maxlength="30" oninput="updateProfileInitials(this.value)" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Profile Colour</label>
+          <div class="color-swatches">
+            <div class="color-opt selected" data-color="#3b82f6" style="background:#3b82f6" onclick="selectColor('#3b82f6')" title="Blue"></div>
+            <div class="color-opt" data-color="#8b5cf6" style="background:#8b5cf6" onclick="selectColor('#8b5cf6')" title="Violet"></div>
+            <div class="color-opt" data-color="#ec4899" style="background:#ec4899" onclick="selectColor('#ec4899')" title="Pink"></div>
+            <div class="color-opt" data-color="#ef4444" style="background:#ef4444" onclick="selectColor('#ef4444')" title="Red"></div>
+            <div class="color-opt" data-color="#f97316" style="background:#f97316" onclick="selectColor('#f97316')" title="Orange"></div>
+            <div class="color-opt" data-color="#eab308" style="background:#eab308" onclick="selectColor('#eab308')" title="Yellow"></div>
+            <div class="color-opt" data-color="#22c55e" style="background:#22c55e" onclick="selectColor('#22c55e')" title="Green"></div>
+            <div class="color-opt" data-color="#14b8a6" style="background:#14b8a6" onclick="selectColor('#14b8a6')" title="Teal"></div>
+            <div class="color-opt" data-color="#c8a96e" style="background:#c8a96e" onclick="selectColor('#c8a96e')" title="Gold"></div>
+            <div class="color-opt" data-color="#a8a8b3" style="background:#a8a8b3" onclick="selectColor('#a8a8b3')" title="Silver"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('profile-modal')">Cancel</button>
+      <button class="btn-primary" onclick="document.getElementById('profile-form').requestSubmit()">Save Profile</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ══════════════════════════════════════════
+     MODAL: ACCOUNT SETTINGS
+══════════════════════════════════════════ -->
+<dialog id="settings-modal" class="modal-dlg" onclick="closeOnBackdrop(event,'settings-modal')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title" id="settings-modal-title">Account Settings</span>
+      <button class="modal-close" onclick="closeModal('settings-modal')" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:4px;">Account</div>
+        <div id="settings-account-name" style="font-weight:600; color:var(--text-primary); font-size:15px;"></div>
+        <div id="settings-account-email" style="font-size:13px; color:var(--text-muted); margin-top:2px;"></div>
+      </div>
+
+      <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:14px;">Change Password</div>
+      <div id="settings-error" style="display:none; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:var(--danger); padding:8px 12px; border-radius:8px; font-size:13px; margin-bottom:12px;"></div>
+      <div id="settings-success" style="display:none; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#22c55e; padding:8px 12px; border-radius:8px; font-size:13px; margin-bottom:12px;"></div>
+
+      <div class="form-group">
+        <label class="form-label" for="settings-current-pw">Current Password</label>
+        <input id="settings-current-pw" type="password" class="form-input" placeholder="Enter current password" autocomplete="current-password" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="settings-new-pw">New Password</label>
+        <input id="settings-new-pw" type="password" class="form-input" placeholder="At least 6 characters" autocomplete="new-password" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="settings-confirm-pw">Confirm New Password</label>
+        <input id="settings-confirm-pw" type="password" class="form-input" placeholder="Repeat new password" autocomplete="new-password" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('settings-modal')">Cancel</button>
+      <button class="btn-primary" onclick="changePassword()">Update Password</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ══════════════════════════════════════════
+     MODAL: CONFIRM DELETE
+══════════════════════════════════════════ -->
+<dialog id="confirm-modal" class="modal-dlg" onclick="closeOnBackdrop(event,'confirm-modal')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-header">
+      <span class="modal-title" id="confirm-title">Confirm</span>
+      <button class="modal-close" onclick="closeModal('confirm-modal')" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-msg" class="confirm-message"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button id="confirm-ok-btn" class="btn-danger">Delete</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Toast container -->
+<div id="toast-container" aria-live="polite"></div>
+
+<script src="app.js"></script>
+<script>
+  // Wire up movie-save-btn visibility when form shown
+  const _origOpenMovieModal = openMovieModal;
+  // Show/hide save btn based on whether movie-form is visible
+  function _syncSaveBtn() {
+    const form = document.getElementById('movie-form');
+    const btn  = document.getElementById('movie-save-btn');
+    if (!form || !btn) return;
+    btn.style.display = (form.style.display === 'none' || form.style.display === '') && form.style.display !== 'block' ? 'none' : '';
+  }
+
+  // Patch showManualForm and fillFromTMDB to also show save btn
+  const _origShowManualForm  = showManualForm;
+  const _origFillFromTMDB    = fillFromTMDB;
+
+  window.showManualForm = function() {
+    _origShowManualForm();
+    document.getElementById('movie-save-btn').style.display = '';
+  };
+
+  window.fillFromTMDB = async function(id) {
+    await _origFillFromTMDB(id);
+    document.getElementById('movie-save-btn').style.display = '';
+  };
+
+  // Also show save btn when editing existing movie
+  const _origOpenMovieModalOuter = openMovieModal;
+  window.openMovieModal = function(id) {
+    _origOpenMovieModalOuter(id);
+    if (id) {
+      document.getElementById('movie-save-btn').style.display = '';
+    } else {
+      document.getElementById('movie-save-btn').style.display = 'none';
+    }
+  };
+
+  // Profile name syncs avatar initials
+  document.addEventListener('DOMContentLoaded', () => {
+    // update active profile name label in header
+    function _updateHeaderName() {
+      const nameEl = document.getElementById('active-profile-name');
+      if (nameEl && window.currentProfile) {
+        nameEl.textContent = currentProfile.name || '';
+      }
+    }
+    // patch enterApp
+    const _origEnterApp = window.enterApp;
+    window.enterApp = function() {
+      _origEnterApp();
+      _updateHeaderName();
+    };
+  });
+
+  // Also update auth tab visuals
+  function showAuthPanel(panel) {
+    document.getElementById('auth-panel-login').style.display    = panel === 'login'    ? '' : 'none';
+    document.getElementById('auth-panel-register').style.display = panel === 'register' ? '' : 'none';
+    document.getElementById('tab-login').classList.toggle('active', panel === 'login');
+    document.getElementById('tab-register').classList.toggle('active', panel === 'register');
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('reg-error').textContent   = '';
+  }
+</script>
 </body>
 </html>
