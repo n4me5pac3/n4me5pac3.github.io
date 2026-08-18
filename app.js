@@ -8,7 +8,7 @@ const API_BASE = (
   location.hostname === '127.0.0.1' ||
   location.hostname === '0.0.0.0'
 ) ? 'http://localhost:3001'
-  : 'nsmovies.vercel.app'; // ← Replace with your Vercel URL
+  : 'https://nsmovies.vercel.app'; // ← Replace with your Vercel URL
 
 // TMDB v3 API — uses api_key param (classic method, still supported)
 const TMDB_API_KEY = '06f14c402a5fe56202221384f42b44f6';
