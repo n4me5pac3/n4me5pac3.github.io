@@ -1348,7 +1348,7 @@ function openSurpriseModal() {
   sorted.forEach(g => {
     const isExcluded = surpriseSettings.excludedGenres.includes(g);
     const pill = document.createElement('div');
-    pill.className = `genre-pill ${isExcluded ? 'excluded' : 'included'}`;
+    pill.className = `surprise-genre-pill ${isExcluded ? 'excluded' : 'included'}`;
     pill.textContent = g;
     pill.onclick = () => {
       if (surpriseSettings.excludedGenres.includes(g)) {
