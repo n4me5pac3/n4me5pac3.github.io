@@ -1508,31 +1508,45 @@ dialog.modal-dlg::backdrop {
 @media (max-width: 768px) {
   .app-header { padding: 0 16px; }
   .app-body   { padding: 20px 16px 40px; }
-  .toolbar { gap: 8px; }
-  .search-wrap { max-width: 100%; }
+  .toolbar { gap: 8px; flex-wrap: wrap; }
+  .search-wrap { order: 1; flex: 0 0 100%; max-width: 100%; }
+  #genre-select { order: 2; flex: 1; min-width: 0; padding: 7px; font-size: 0.75rem; }
+  #rated-select { order: 2; flex: 1; min-width: 0; padding: 7px; font-size: 0.75rem; }
+  #sort-select  { order: 2; flex: 1; min-width: 0; padding: 7px; font-size: 0.75rem; }
+  #sort-dir-btn { order: 2; }
   
-  .filter-tabs { order: 3; width: 100%; display: flex; }
-  .filter-tab { flex: 1; text-align: center; justify-content: center; }
-  .toolbar > select, .sort-select { flex: 1; min-width: 0; }
-  .split-btn-group, .toolbar-add-btn { flex: 1; justify-content: center; min-width: 120px; }
+  #multiselect-toggle-btn { order: 3; }
+  .split-btn-group { order: 3; flex: 1; justify-content: center; }
   .split-btn-main { flex: 1; justify-content: center; }
-  
-  /* Make modals cover the whole screen on mobile */
+  .toolbar-add-btn { order: 3; flex: 1; justify-content: center; }
+
+  .filter-tabs { order: 4; flex: 0 0 100%; width: 100%; display: flex; margin-top: 2px; }
+  .filter-tab { flex: 1; text-align: center; justify-content: center; }
+
+  .movies-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .detail-hero { margin-top: -20px; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal-body   { padding: 16px; }
+  .modal-header { padding: 16px; }
+  .modal-footer { padding: 12px 16px; }
+  #toast-container { bottom: 16px; right: 16px; left: 16px; align-items: stretch; }
+  .toast { max-width: 100%; }
+
+  /* Revert full height modal to avoid bottom nav clipping */
   dialog.modal-dlg { 
-    padding: 0; 
+    padding: 16px; 
     width: 100%; 
-    max-height: 100vh; 
-    height: 100vh; 
-    margin: 0;
-    border-radius: 0;
+    max-height: 100dvh; 
+    height: auto; 
+    margin: auto;
+    border-radius: var(--radius-xl);
   }
   .modal { 
-    border-radius: 0; 
-    max-height: 100vh; 
-    height: 100vh; 
-    border: none; 
+    border-radius: var(--radius-xl); 
+    max-height: calc(100dvh - 32px); 
+    height: auto; 
+    border: 1px solid var(--border-mid); 
   }
-  .modal-body { padding: 16px; }
 
   .movies-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
   .detail-hero { margin-top: -20px; }

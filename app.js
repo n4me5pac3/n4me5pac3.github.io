@@ -924,7 +924,7 @@ async function searchTMDB() {
       return;
     }
     document.getElementById('add-manual-wrap').style.display = 'block';
-    resultsEl.innerHTML = `<div class="tmdb-results-grid">` + data.results.slice(0, 12).map(r => {
+    resultsEl.innerHTML = `<div class="tmdb-results-grid">` + data.results.map(r => {
       const year   = r.release_date ? r.release_date.slice(0, 4) : '';
       const poster = r.poster_path  ? `${TMDB_IMG}${r.poster_path}` : '';
       const isSelected = pendingMovies.some(p => p.id === r.id);
