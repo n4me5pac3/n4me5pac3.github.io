@@ -1211,7 +1211,7 @@ function openDetailModal(id) {
             `<span style="color:${i <= r.rating ? '#f0ba4a' : 'rgba(255,255,255,0.15)'}; display:flex; width:12px; margin-right:2px; transition:color 0.2s;">${starIconSvg}</span>`
           ).join('');
             
-          return `<div style="display:flex; justify-content:space-between; align-items:center; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+          return `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
             <div style="display:flex; align-items:center; gap:10px;">
               ${pAvatar}
               <span style="font-size:13px; font-weight:500; color:var(--text-primary);">${escHtml(pName)}</span>

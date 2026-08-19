@@ -1510,7 +1510,30 @@ dialog.modal-dlg::backdrop {
   .app-body   { padding: 20px 16px 40px; }
   .toolbar { gap: 8px; }
   .search-wrap { max-width: 100%; }
-  .filter-tabs { order: 3; width: 100%; }
+  
+  .filter-tabs { order: 3; width: 100%; display: flex; }
+  .filter-tab { flex: 1; text-align: center; justify-content: center; }
+  .toolbar > select, .sort-select { flex: 1; min-width: 0; }
+  .split-btn-group, .toolbar-add-btn { flex: 1; justify-content: center; min-width: 120px; }
+  .split-btn-main { flex: 1; justify-content: center; }
+  
+  /* Make modals cover the whole screen on mobile */
+  dialog.modal-dlg { 
+    padding: 0; 
+    width: 100%; 
+    max-height: 100vh; 
+    height: 100vh; 
+    margin: 0;
+    border-radius: 0;
+  }
+  .modal { 
+    border-radius: 0; 
+    max-height: 100vh; 
+    height: 100vh; 
+    border: none; 
+  }
+  .modal-body { padding: 16px; }
+
   .movies-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
   .detail-hero { margin-top: -20px; }
   .form-row { grid-template-columns: 1fr; }
@@ -1624,4 +1647,13 @@ dialog.modal-dlg::backdrop {
 }
 .surprise-genre-pill.excluded:hover {
   background: rgba(239, 68, 68, 0.2);
+}
+
+/* Ensure detail status buttons stretch to fill width */
+.detail-status-btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
