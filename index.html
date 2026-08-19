@@ -217,6 +217,10 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
       </button>
 
+            <button class="toolbar-surprise-btn" onclick="openSurpriseModal()" title="Random Movie Picker">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><circle cx="15.5" cy="15.5" r="1.5"></circle><circle cx="15.5" cy="8.5" r="1.5"></circle><circle cx="8.5" cy="15.5" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle></svg>
+        Surprise Me
+      </button>
       <button class="toolbar-add-btn" onclick="openMovieModal()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Movie
@@ -566,6 +570,45 @@
     <div class="modal-footer">
       <button class="btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
       <button id="confirm-ok-btn" class="btn-danger">Delete</button>
+    </div>
+  </div>
+</dialog>
+
+
+<!-- ══════════════════════════════════════════
+     MODAL: SURPRISE ME
+══════════════════════════════════════════ -->
+<dialog id="surprise-modal" class="modal-dlg" onclick="closeOnBackdrop(event,'surprise-modal')">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="surprise-title" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title" id="surprise-title">Surprise Me!</span>
+      <button class="modal-close" onclick="closeModal('surprise-modal')" title="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Pick a random movie from your list based on the criteria below.</p>
+      
+      <div class="form-group">
+        <label class="form-label">Include Statuses</label>
+        <div style="display:flex; gap:12px; font-size:13px;">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="surprise-status-unwatched" checked> Unwatched</label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="surprise-status-unfinished"> Unfinished</label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="surprise-status-watched"> Watched</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Exclude Genres</label>
+        <select id="surprise-exclude-genres" class="form-input" multiple style="height:100px;">
+          <!-- Populated dynamically -->
+        </select>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Hold Ctrl/Cmd to select multiple.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('surprise-modal')">Cancel</button>
+      <button class="btn-primary" onclick="pickSurpriseMovie()">Pick Movie</button>
     </div>
   </div>
 </dialog>

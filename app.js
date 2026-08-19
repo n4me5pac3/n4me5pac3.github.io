@@ -1305,6 +1305,56 @@ async function quickRatingChange(id, rating) {
   } catch { showToast('Failed to save rating', 'error'); }
 }
 
+
+// ─── SURPRISE ME ─────────────────────────────────
+function openSurpriseModal() {
+  const select = document.getElementById('surprise-exclude-genres');
+  const genres = new Set();
+  movies.forEach(m => (m.genre || []).forEach(g => genres.add(g)));
+  const sorted = Array.from(genres).sort();
+  select.innerHTML = '';
+  sorted.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g; opt.textContent = g;
+    select.appendChild(opt);
+  });
+  openModal('surprise-modal');
+}
+
+function pickSurpriseMovie() {
+  const includeUnwatched = document.getElementById('surprise-status-unwatched').checked;
+  const includeUnfinished = document.getElementById('surprise-status-unfinished').checked;
+  const includeWatched = document.getElementById('surprise-status-watched').checked;
+  
+  const select = document.getElementById('surprise-exclude-genres');
+  const excludedGenres = Array.from(select.selectedOptions).map(o => o.value);
+
+  const candidates = movies.filter(m => {
+    const status = m.profileStatus || 'unwatched';
+    let matchStatus = false;
+    if (status === 'unwatched' && includeUnwatched) matchStatus = true;
+    if (status === 'unfinished' && includeUnfinished) matchStatus = true;
+    if (status === 'watched' && includeWatched) matchStatus = true;
+
+    if (!matchStatus) return false;
+
+    if (excludedGenres.length > 0 && m.genre) {
+      if (m.genre.some(g => excludedGenres.includes(g))) return false;
+    }
+    
+    return true;
+  });
+
+  if (candidates.length === 0) {
+    showToast('No movies match your criteria!', 'error');
+    return;
+  }
+
+  const pick = candidates[Math.floor(Math.random() * candidates.length)];
+  closeModal('surprise-modal');
+  openDetailModal(pick._id);
+}
+
 // ─── DELETE ──────────────────────────────────────
 function confirmDelete(id, type, name) {
   document.getElementById('confirm-title').textContent = `Delete Movie?`;

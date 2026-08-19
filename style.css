@@ -593,7 +593,7 @@ textarea.form-input { resize: vertical; min-height: 72px; }
   position: relative;
   flex: 1;
   min-width: 180px;
-  max-width: 360px;
+  max-width: none;
 }
 
 .search-icon {
@@ -1530,3 +1530,20 @@ dialog.modal-dlg::backdrop {
   .login-card { padding: 28px 20px; }
   .detail-poster { width: 80px; min-width: 80px; }
 }
+
+.toolbar-surprise-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.toolbar-surprise-btn:hover { background: var(--bg-hover); border-color: var(--text-muted); }
