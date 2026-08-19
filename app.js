@@ -1329,7 +1329,7 @@ function openModal(id) {
   if (!el) return;
   if (id === 'settings-modal') {
     // Populate account info
-    document.getElementById('settings-account-name').textContent = currentAccount?.accountName || '';
+    document.getElementById('settings-account-name-input').value = currentAccount?.accountName || '';
     document.getElementById('settings-account-email').textContent = currentAccount?.email || '';
     // Reset form
     document.getElementById('settings-current-pw').value = '';
