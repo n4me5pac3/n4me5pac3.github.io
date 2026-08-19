@@ -6,8 +6,10 @@
 const API_BASE = (
   location.hostname === 'localhost' ||
   location.hostname === '127.0.0.1' ||
-  location.hostname === '0.0.0.0'
-) ? 'http://localhost:3001'
+  location.hostname === '0.0.0.0' ||
+  location.hostname.startsWith('192.168.') ||
+  location.hostname.startsWith('10.')
+) ? `http://${location.hostname}:3001`
   : 'https://nsmovies-backend.fly.dev'; // ← Replace with your Vercel URL
 
 // TMDB v3 API — uses api_key param (classic method, still supported)
