@@ -191,6 +191,16 @@
         <button id="filter-unfinished" class="filter-tab"        onclick="setFilter('unfinished')">Unfinished</button>
       </div>
 
+      <select id="genre-select" class="sort-select" onchange="setGenreFilter(this.value)" title="Filter by Genre" style="margin-right: 0.5rem;">
+        <option value="all">All Genres</option>
+      </select>
+
+      <select id="rated-select" class="sort-select" onchange="setRatedFilter(this.value)" title="Filter by Rating Status" style="margin-right: 0.5rem;">
+        <option value="all">Rated & Unrated</option>
+        <option value="rated">Rated</option>
+        <option value="unrated">Unrated</option>
+      </select>
+
       <select id="sort-select" class="sort-select" onchange="setSort(this.value)" title="Sort by">
         <option value="added">Added</option>
         <option value="title">Title</option>
@@ -507,8 +517,11 @@
     </div>
     <div class="modal-body">
       <div style="margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
-        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:4px;">Account</div>
-        <div id="settings-account-name" style="font-weight:600; color:var(--text-primary); font-size:15px;"></div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:4px;">Account Name</div>
+        <div style="display:flex; gap:8px;">
+           <input id="settings-account-name-input" type="text" class="form-input" style="flex:1" />
+           <button class="btn-primary" onclick="changeAccountName()" style="padding:0 12px;">Save</button>
+        </div>
         <div id="settings-account-email" style="font-size:13px; color:var(--text-muted); margin-top:2px;"></div>
       </div>
 

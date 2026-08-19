@@ -22,6 +22,8 @@ let profileToken         = null;
 let currentAccount       = null;
 let currentProfile       = null;
 let currentFilter        = 'all';
+let currentGenreFilter = 'all';
+let currentRatedFilter = 'all';
 let currentSort          = 'added';
 let sortDir              = 'desc'; // 'asc' or 'desc'
 let searchQuery          = '';
@@ -593,6 +595,7 @@ async function loadMovies() {
     const res = await apiFetch('/api/movies');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     movies = await res.json();
+    updateGenreDropdown();
     renderMovies();
     updateStats();
   } catch (err) {
@@ -603,6 +606,23 @@ async function loadMovies() {
 }
 
 // ─── RENDER MOVIES ───────────────────────────────
+function setGenreFilter(val) { currentGenreFilter = val; renderMovies(); }
+function setRatedFilter(val) { currentRatedFilter = val; renderMovies(); }
+function updateGenreDropdown() {
+  const select = document.getElementById('genre-select');
+  if (!select) return;
+  const genres = new Set();
+  movies.forEach(m => (m.genre || []).forEach(g => genres.add(g)));
+  const sorted = Array.from(genres).sort();
+  const currentVal = select.value;
+  select.innerHTML = '<option value="all">All Genres</option>';
+  sorted.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g; opt.textContent = g; select.appendChild(opt);
+  });
+  if (sorted.includes(currentVal)) select.value = currentVal;
+}
+
 function renderMovies() {
   const grid  = document.getElementById('movies-grid');
   const empty = document.getElementById('empty-state');
@@ -611,11 +631,17 @@ function renderMovies() {
   let filtered = movies.filter(m => {
     const status      = m.profileStatus || 'unwatched';
     const matchFilter = currentFilter === 'all' || status === currentFilter;
+    const matchGenre = currentGenreFilter === 'all' || (m.genre || []).includes(currentGenreFilter);
+    const isRated = m.profileRating != null;
+    let matchRated = true;
+    if (currentRatedFilter === 'rated') matchRated = isRated;
+    if (currentRatedFilter === 'unrated') matchRated = !isRated;
+
     const matchSearch = !searchQuery ||
       (m.title   || '').toLowerCase().includes(searchQuery) ||
       (m.director|| '').toLowerCase().includes(searchQuery) ||
       (m.genre   || []).some(g => g.toLowerCase().includes(searchQuery));
-    return matchFilter && matchSearch;
+    return matchFilter && matchGenre && matchRated && matchSearch;
   });
 
   filtered.sort((a, b) => {
@@ -818,7 +844,7 @@ async function saveMovie(e) {
     synopsis:      document.getElementById('movie-synopsis').value.trim()  || undefined,
     posterUrl:     document.getElementById('movie-poster').value.trim()    || undefined,
     profileStatus: document.getElementById('movie-status').value,
-    profileRating: selectedRating || undefined,
+    profileRating: document.getElementById('movie-status').value === 'watched' ? (selectedRating || null) : null,
     profileNotes:  document.getElementById('movie-notes').value.trim()     || undefined,
     tmdbId:        parseInt(document.getElementById('movie-tmdb-id').value) || undefined,
   };
@@ -1135,7 +1161,7 @@ function initStarHover() {
 function toggleRatingField() {
   const status = document.getElementById('movie-status').value;
   document.getElementById('rating-group').style.display =
-    (status === 'watched' || status === 'unfinished') ? '' : 'none';
+    (status === 'watched') ? '' : 'none';
 }
 
 // ─── DETAIL MODAL ────────────────────────────────
@@ -1153,12 +1179,12 @@ function openDetailModal(id) {
   const ratingHtml = avgRating
     ? `<div class="detail-rating-row">${starsHtml}<span class="detail-rating-num">&nbsp;${avgRating}</span><span class="detail-rating-max">/10</span></div>`
     : '';
-  const inlineStars = [1,2,3,4,5,6,7,8,9,10].map(i =>
+  const inlineStars = status === 'watched' ? [1,2,3,4,5,6,7,8,9,10].map(i =>
     `<span class="inline-star ${i <= rating ? 'on' : ''}" data-val="${i}"
       onclick="quickRatingChange('${m._id}',${i})"
       onmouseenter="hoverInlineStars(${i},'${m._id}')"
       onmouseleave="resetInlineStars(${rating},'${m._id}')">${starIconSvg}</span>`
-  ).join('');
+  ).join('') : '<span style="color: var(--text-muted); font-size: 0.8rem;">Mark as Watched to rate</span>';
   const editBtn = (!m.tmdbId)
     ? `<button class="btn-primary" onclick="closeModal('detail-modal');openMovieModal('${m._id}')">Edit Movie</button>`
     : '';
@@ -1303,7 +1329,7 @@ function openModal(id) {
   if (!el) return;
   if (id === 'settings-modal') {
     // Populate account info
-    document.getElementById('settings-account-name').textContent = currentAccount?.accountName || '';
+    document.getElementById('settings-account-name-input').value = currentAccount?.accountName || '';
     document.getElementById('settings-account-email').textContent = currentAccount?.email || '';
     // Reset form
     document.getElementById('settings-current-pw').value = '';
@@ -1314,6 +1340,22 @@ function openModal(id) {
   }
   el.showModal();
   document.documentElement.style.overflow = 'hidden';
+}
+
+
+async function changeAccountName() {
+  const newName = document.getElementById('settings-account-name-input').value.trim();
+  if (!newName) return showToast('Account name cannot be empty', 'error');
+  try {
+    const res = await apiFetch('/api/auth/update-account', { method: 'PUT', body: JSON.stringify({ accountName: newName }) });
+    if (!res.ok) throw new Error();
+    const updatedAccount = await res.json();
+    currentAccount = updatedAccount;
+    localStorage.setItem('ns_account', JSON.stringify(currentAccount));
+    showToast('Account name updated successfully', 'success');
+  } catch (e) {
+    showToast('Failed to update account name', 'error');
+  }
 }
 
 async function changePassword() {
