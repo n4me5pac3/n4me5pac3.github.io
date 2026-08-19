@@ -699,6 +699,12 @@ function movieCardHTML(m) {
         <div class="card-title">${escHtml(m.title)}</div>
         <div class="card-meta">${m.year ? `<span>${m.year}</span>` : ''}${m.runtime ? `<span>· ${m.runtime}m</span>` : ''}</div>
         ${genres ? `<div class="card-genre">${genres}</div>` : ''}
+        ${(() => {
+          if (!m.addedBy) return '';
+          const adder = globalProfiles.find(p => p._id === m.addedBy);
+          if (adder) return `<div class="card-meta" style="margin-top: 4px; font-size: 10px; color: var(--text-faint);">Added by ${escHtml(adder.name)}</div>`;
+          return '';
+        })()}
       </div>
     </div>`;
 }
@@ -1243,6 +1249,12 @@ function openDetailModal(id) {
             ${m.director? `<span class="detail-sep">·</span><span>Dir. ${escHtml(m.director)}</span>` : ''}
           </div>
           ${m.genre?.length ? `<div class="detail-genres">${m.genre.map(g => `<span class="detail-genre-pill">${escHtml(g)}</span>`).join('')}</div>` : ''}
+          ${(() => {
+            if (!m.addedBy) return '';
+            const adder = globalProfiles.find(p => p._id === m.addedBy);
+            if (adder) return `<div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Added by <strong>${escHtml(adder.name)}</strong></div>`;
+            return '';
+          })()}
           <div style="display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap;">
             <span class="card-status-badge badge-${status}" style="position:static;display:inline-block">${statusLabel}</span>
             ${ratingHtml}
