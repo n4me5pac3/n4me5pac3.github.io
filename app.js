@@ -1264,7 +1264,7 @@ function openDetailModal(id) {
         </div>
         <div class="inline-rating">
           <div class="inline-stars" id="inline-stars-${m._id}">${inlineStars}</div>
-          <span style="font-size:13px;color:var(--text-muted)" id="inline-rating-num-${m._id}">${rating ? `${rating}/10` : 'Not rated'}</span>
+          <span style="font-size:13px;color:var(--text-muted)" id="inline-rating-num-${m._id}">${status === 'watched' ? (rating ? `${rating}/10` : 'Not rated') : ''}</span>
         </div>
         ${breakdownHtml}
       </div>
@@ -1353,6 +1353,8 @@ async function changeAccountName() {
     currentAccount = updatedAccount;
     localStorage.setItem('ns_account', JSON.stringify(currentAccount));
     showToast('Account name updated successfully', 'success');
+    const nameEl = document.getElementById('profiles-account-name');
+    if (nameEl) nameEl.textContent = updatedAccount.accountName;
   } catch (e) {
     showToast('Failed to update account name', 'error');
   }
