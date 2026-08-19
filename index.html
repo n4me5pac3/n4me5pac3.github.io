@@ -597,18 +597,16 @@
       <div class="form-group">
         <label class="form-label">Include Statuses</label>
         <div style="display:flex; gap:12px; font-size:13px;">
-          <label class="surprise-checkbox-label"><input type="checkbox" id="surprise-status-unwatched" checked> Unwatched</label>
-          <label class="surprise-checkbox-label"><input type="checkbox" id="surprise-status-unfinished"> Unfinished</label>
-          <label class="surprise-checkbox-label"><input type="checkbox" id="surprise-status-watched"> Watched</label>
+          <label class="surprise-checkbox-label"><input type="checkbox" id="surprise-status-unwatched" onchange="saveSurpriseSettings()" checked> Unwatched</label>
+          <label class="surprise-checkbox-label"><input type="checkbox" id="surprise-status-unfinished" onchange="saveSurpriseSettings()"> Unfinished</label>
+          <label class="surprise-checkbox-label"><input type="checkbox" id="surprise-status-watched" onchange="saveSurpriseSettings()"> Watched</label>
         </div>
       </div>
 
       <div class="form-group">
         <label class="form-label">Exclude Genres</label>
-        <select id="surprise-exclude-genres" class="form-input" multiple style="height:100px;">
-          <!-- Populated dynamically -->
-        </select>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Hold Ctrl/Cmd to select multiple.</div>
+        <div id="surprise-genres-container" class="genre-pill-container"></div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:8px;">Click a genre to exclude it (turns red and crossed out).</div>
       </div>
     </div>
     <div class="modal-footer">

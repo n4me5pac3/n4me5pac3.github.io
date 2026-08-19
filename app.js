@@ -1307,39 +1307,66 @@ async function quickRatingChange(id, rating) {
 
 
 // ─── SURPRISE ME ─────────────────────────────────
+
+let surpriseSettings = JSON.parse(localStorage.getItem('ns_surprise_settings')) || {
+  unwatched: true,
+  unfinished: false,
+  watched: false,
+  excludedGenres: []
+};
+
+function saveSurpriseSettings() {
+  surpriseSettings.unwatched = document.getElementById('surprise-status-unwatched').checked;
+  surpriseSettings.unfinished = document.getElementById('surprise-status-unfinished').checked;
+  surpriseSettings.watched = document.getElementById('surprise-status-watched').checked;
+  localStorage.setItem('ns_surprise_settings', JSON.stringify(surpriseSettings));
+}
+
 function openSurpriseModal() {
-  const select = document.getElementById('surprise-exclude-genres');
+  document.getElementById('surprise-status-unwatched').checked = surpriseSettings.unwatched;
+  document.getElementById('surprise-status-unfinished').checked = surpriseSettings.unfinished;
+  document.getElementById('surprise-status-watched').checked = surpriseSettings.watched;
+
+  const container = document.getElementById('surprise-genres-container');
   const genres = new Set();
   movies.forEach(m => (m.genre || []).forEach(g => genres.add(g)));
   const sorted = Array.from(genres).sort();
-  select.innerHTML = '';
+  
+  container.innerHTML = '';
   sorted.forEach(g => {
-    const opt = document.createElement('option');
-    opt.value = g; opt.textContent = g;
-    select.appendChild(opt);
+    const isExcluded = surpriseSettings.excludedGenres.includes(g);
+    const pill = document.createElement('div');
+    pill.className = `genre-pill ${isExcluded ? 'excluded' : 'included'}`;
+    pill.textContent = g;
+    pill.onclick = () => {
+      if (surpriseSettings.excludedGenres.includes(g)) {
+        surpriseSettings.excludedGenres = surpriseSettings.excludedGenres.filter(x => x !== g);
+        pill.classList.remove('excluded');
+        pill.classList.add('included');
+      } else {
+        surpriseSettings.excludedGenres.push(g);
+        pill.classList.remove('included');
+        pill.classList.add('excluded');
+      }
+      saveSurpriseSettings();
+    };
+    container.appendChild(pill);
   });
   openModal('surprise-modal');
 }
 
 function pickSurpriseMovie() {
-  const includeUnwatched = document.getElementById('surprise-status-unwatched').checked;
-  const includeUnfinished = document.getElementById('surprise-status-unfinished').checked;
-  const includeWatched = document.getElementById('surprise-status-watched').checked;
-  
-  const select = document.getElementById('surprise-exclude-genres');
-  const excludedGenres = Array.from(select.selectedOptions).map(o => o.value);
-
   const candidates = movies.filter(m => {
     const status = m.profileStatus || 'unwatched';
     let matchStatus = false;
-    if (status === 'unwatched' && includeUnwatched) matchStatus = true;
-    if (status === 'unfinished' && includeUnfinished) matchStatus = true;
-    if (status === 'watched' && includeWatched) matchStatus = true;
+    if (status === 'unwatched' && surpriseSettings.unwatched) matchStatus = true;
+    if (status === 'unfinished' && surpriseSettings.unfinished) matchStatus = true;
+    if (status === 'watched' && surpriseSettings.watched) matchStatus = true;
 
     if (!matchStatus) return false;
 
-    if (excludedGenres.length > 0 && m.genre) {
-      if (m.genre.some(g => excludedGenres.includes(g))) return false;
+    if (surpriseSettings.excludedGenres.length > 0 && m.genre) {
+      if (m.genre.some(g => surpriseSettings.excludedGenres.includes(g))) return false;
     }
     
     return true;
